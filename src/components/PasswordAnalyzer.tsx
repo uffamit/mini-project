@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Loader2, KeyRound } from "lucide-react";
+import zxcvbn from "zxcvbn";
 
 import { analyzePassword } from "@/ai/flows/analyze-password";
 import { useToast } from "@/hooks/use-toast";
@@ -25,17 +26,20 @@ interface AnalysisResult {
 }
 
 const getPasswordStrength = (password: string): 'Weak' | 'Moderate' | 'Strong' => {
-  let score = 0;
-  if (password.length >= 8) score++;
-  if (password.length >= 12) score++;
-  if (/[A-Z]/.test(password)) score++;
-  if (/[a-z]/.test(password)) score++;
-  if (/[0-9]/.test(password)) score++;
-  if (/[^A-Za-z0-9]/.test(password)) score++;
-
-  if (score < 3) return 'Weak';
-  if (score < 5) return 'Moderate';
-  return 'Strong';
+  const result = zxcvbn(password);
+  // score: 0, 1, 2, 3, 4 (from weakest to strongest)
+  switch (result.score) {
+    case 0:
+    case 1:
+      return 'Weak';
+    case 2:
+    case 3:
+      return 'Moderate';
+    case 4:
+      return 'Strong';
+    default:
+      return 'Weak';
+  }
 };
 
 
