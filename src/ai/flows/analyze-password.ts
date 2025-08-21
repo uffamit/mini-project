@@ -17,16 +17,13 @@ const AnalyzePasswordInputSchema = z.object({
 export type AnalyzePasswordInput = z.infer<typeof AnalyzePasswordInputSchema>;
 
 const AnalyzePasswordOutputSchema = z.object({
-  strengthLevel: z
-    .string()
-    .describe(
-      'The strength level of the password (e.g., Weak, Moderate, Strong).'
-    ),
   feedback: z.string().describe('Feedback on how to improve the password.'),
 });
 export type AnalyzePasswordOutput = z.infer<typeof AnalyzePasswordOutputSchema>;
 
-export async function analyzePassword(input: AnalyzePasswordInput): Promise<AnalyzePasswordOutput> {
+export async function analyzePassword(
+  input: AnalyzePasswordInput
+): Promise<AnalyzePasswordOutput> {
   return analyzePasswordFlow(input);
 }
 
@@ -34,11 +31,12 @@ const prompt = ai.definePrompt({
   name: 'analyzePasswordPrompt',
   input: {schema: AnalyzePasswordInputSchema},
   output: {schema: AnalyzePasswordOutputSchema},
-  prompt: `You are a security expert analyzing password strength. Evaluate the password provided and provide a strength level (Weak, Moderate, Strong) and feedback on how to improve it.  Consider rules for password security and length.
+  prompt: `You are a security expert. Based on the password provided, provide actionable and specific feedback on how to improve it.
+Consider common password security rules like length, character types (uppercase, lowercase, numbers, symbols), and avoiding common patterns.
 
 Password: {{{password}}}
 
-Respond in JSON format with strengthLevel and feedback fields.  The feedback should be actionable and specific.
+Respond in JSON format with a single "feedback" field.
 `,
 });
 

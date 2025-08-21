@@ -5,16 +5,17 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import { Loader2, UserPlus } from "lucide-react";
+import { Loader2, UserPlus, Terminal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/context/AuthContext";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -25,6 +26,7 @@ export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,17 +35,16 @@ export default function SignupPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    try {
-      await createUserWithEmailAndPassword(auth, values.email, values.password);
-      router.push("/dashboard");
-    } catch (error: any) {
+    // Dummy signup logic
+    setTimeout(() => {
+      login(values.email, values.password);
       toast({
-        variant: "destructive",
-        title: "Sign Up Failed",
-        description: error.message || "An unexpected error occurred.",
+        title: "Sign Up Successful",
+        description: `Welcome, ${values.email}!`,
       });
-    }
-    setIsLoading(false);
+      router.push("/dashboard");
+      setIsLoading(false);
+    }, 1000);
   }
 
   return (
@@ -59,6 +60,13 @@ export default function SignupPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <Alert className="mb-4">
+            <Terminal className="h-4 w-4" />
+            <AlertTitle>Dummy Sign Up</AlertTitle>
+            <AlertDescription>
+              You can use any email and password to sign up. No data is stored.
+            </AlertDescription>
+          </Alert>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField

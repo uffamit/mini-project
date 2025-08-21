@@ -6,26 +6,42 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Loader2, KeyRound } from "lucide-react";
 
-import { analyzePassword, AnalyzePasswordOutput } from "@/ai/flows/analyze-password";
-import { useAuth } from "@/context/AuthContext";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { analyzePassword } from "@/ai/flows/analyze-password";
+import { useToast } from "@/hooks/use-toast";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { StrengthMeter } from "@/components/StrengthMeter";
-import { useToast } from "@/hooks/use-toast";
 
 const FormSchema = z.object({
   password: z.string().min(1, "Password cannot be empty."),
 });
 
+interface AnalysisResult {
+    strengthLevel: 'Weak' | 'Moderate' | 'Strong';
+    feedback: string;
+}
+
+const getPasswordStrength = (password: string): 'Weak' | 'Moderate' | 'Strong' => {
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (password.length >= 12) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[a-z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  if (score < 3) return 'Weak';
+  if (score < 5) return 'Moderate';
+  return 'Strong';
+};
+
+
 export function PasswordAnalyzer() {
-  const [analysis, setAnalysis] = useState<AnalyzePasswordOutput | null>(null);
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useAuth();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -35,33 +51,18 @@ export function PasswordAnalyzer() {
     },
   });
 
-  const saveHistory = async (result: AnalyzePasswordOutput) => {
-    if (!user) return;
-    try {
-      await addDoc(collection(db, "history"), {
-        userId: user.uid,
-        ...result,
-        timestamp: serverTimestamp(),
-      });
-    } catch (error) {
-      console.error("Error saving history:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Could not save check to session logs.",
-      });
-    }
-  };
-
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsLoading(true);
     setAnalysis(null);
     try {
-      const result = await analyzePassword({ password: data.password });
-      setAnalysis(result);
-      if (user) {
-        await saveHistory(result);
-      }
+      const strengthLevel = getPasswordStrength(data.password);
+      const feedbackResult = await analyzePassword({ password: data.password });
+
+      setAnalysis({
+          strengthLevel,
+          feedback: feedbackResult.feedback,
+      });
+
     } catch (error) {
       console.error("Analysis failed:", error);
       toast({

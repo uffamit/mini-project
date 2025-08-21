@@ -2,18 +2,16 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signOut } from "firebase/auth";
 import { useAuth } from "@/context/AuthContext";
-import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { LogOut, User, KeySquare, ShieldCheck } from "lucide-react";
 
 export function Header() {
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
   const router = useRouter();
 
   const handleSignOut = async () => {
-    await signOut(auth);
+    logout();
     router.push("/login");
   };
 

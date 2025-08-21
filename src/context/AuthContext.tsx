@@ -1,19 +1,24 @@
 "use client";
 
-import type { User } from "firebase/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 import { Skeleton } from "@/components/ui/skeleton";
+
+interface User {
+  email: string;
+}
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  login: (email: string, pass: string) => boolean;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
+  login: () => false,
+  logout: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -21,13 +26,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
+    // Check for user in localStorage on initial load
+    try {
+      const storedUser = localStorage.getItem("dummyUser");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (error) {
+        console.error("Failed to parse user from localStorage", error);
+        localStorage.removeItem("dummyUser");
+    }
+    setLoading(false);
   }, []);
+
+  const login = (email: string, pass: string) => {
+    // Dummy login, any email/pass works
+    const dummyUser = { email };
+    localStorage.setItem("dummyUser", JSON.stringify(dummyUser));
+    setUser(dummyUser);
+    return true;
+  };
+
+  const logout = () => {
+    localStorage.removeItem("dummyUser");
+    setUser(null);
+  };
 
   // Show a loading screen while checking auth state
   if (loading) {
@@ -44,7 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
