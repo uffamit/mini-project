@@ -8,11 +8,18 @@ export default {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: '2rem',
+      screens: {
+        '2xl': '1400px',
+      },
+    },
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
-        code: ['monospace'],
+        body: ['"Roboto Mono"', 'monospace'],
+        headline: ['"Roboto Mono"', 'monospace'],
+        code: ['"Roboto Mono"', 'monospace'],
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -70,6 +77,10 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      boxShadow: {
+        glow: '0 0 15px hsl(var(--primary) / 0.5)',
+        'glow-accent': '0 0 15px hsl(var(--accent) / 0.5)',
       },
       keyframes: {
         'accordion-down': {
