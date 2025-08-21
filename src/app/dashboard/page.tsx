@@ -1,10 +1,13 @@
+
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { ShieldCheck } from "lucide-react";
 
 export default function DashboardPage() {
@@ -50,7 +53,12 @@ export default function DashboardPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-            <p className="text-center text-muted-foreground">Session history is not available with dummy authentication. Analyze a password on the main page to see live results.</p>
+            <div className="text-center space-y-4">
+              <p className="text-muted-foreground">Session history is not available with dummy authentication. Analyze a password on the main page to see live results.</p>
+              <Button asChild>
+                  <Link href="/">Check Password</Link>
+              </Button>
+            </div>
         </CardContent>
       </Card>
     </div>
