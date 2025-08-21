@@ -48,13 +48,13 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-full items-center justify-center p-4">
-      <Card className="w-full max-w-md rounded-none border-primary/20 bg-background/50 backdrop-blur-sm">
+      <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-primary">
+          <CardTitle className="flex items-center gap-2">
             <LogIn />
             <span>Login to Your Account</span>
           </CardTitle>
-          <CardDescription className="text-muted-foreground">
+          <CardDescription>
             Access your session logs and analysis history.
           </CardDescription>
         </CardHeader>
@@ -66,9 +66,9 @@ export default function LoginPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-primary/80">Email</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input className="rounded-none bg-transparent" placeholder="user@domain.com" {...field} />
+                      <Input placeholder="user@domain.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -79,23 +79,23 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-primary/80">Password</FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input className="rounded-none bg-transparent" type="password" placeholder="********" {...field} />
+                      <Input type="password" placeholder="********" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={isLoading} className="w-full rounded-none border border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:shadow-glow">
+              <Button type="submit" disabled={isLoading} className="w-full">
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Login"}
               </Button>
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
-            <p className="text-muted-foreground">
+            <p>
               Don't have an account?{' '}
-              <Link href="/signup" className="font-bold text-accent underline-offset-4 hover:underline hover:shadow-glow-accent">
+              <Link href="/signup" className="font-semibold text-primary underline-offset-4 hover:underline">
                 Sign Up
               </Link>
             </p>

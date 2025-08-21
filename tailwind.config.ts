@@ -16,11 +16,6 @@ export default {
       },
     },
     extend: {
-      fontFamily: {
-        body: ['"Roboto Mono"', 'monospace'],
-        headline: ['"Roboto Mono"', 'monospace'],
-        code: ['"Roboto Mono"', 'monospace'],
-      },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
@@ -77,10 +72,6 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
-      },
-      boxShadow: {
-        glow: '0 0 15px hsl(var(--primary) / 0.5)',
-        'glow-accent': '0 0 15px hsl(var(--accent) / 0.5)',
       },
       keyframes: {
         'accordion-down': {

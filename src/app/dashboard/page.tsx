@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShieldCheck } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface HistoryItem {
   id: string;
@@ -21,18 +22,25 @@ interface HistoryItem {
 const StrengthBadge = ({ level }: { level: string }) => {
   const levelLower = level.toLowerCase();
   let variant: "default" | "secondary" | "destructive" = "secondary";
-  if (levelLower === 'strong') variant = "default";
-  if (levelLower === 'weak') variant = "destructive";
+  let className = "";
+
+  if (levelLower === 'strong') {
+    variant = "default";
+    className = "bg-green-500 text-white";
+  }
+  if (levelLower === 'moderate') {
+    variant = "secondary";
+     className = "bg-yellow-500 text-black";
+  }
+  if (levelLower === 'weak') {
+    variant = "destructive";
+    className = "bg-red-500 text-white";
+  }
   
   return (
     <Badge 
       variant={variant} 
-      className={cn(
-        "rounded-none", 
-        variant === 'default' && "bg-primary text-primary-foreground",
-        variant === 'secondary' && "bg-yellow-500 text-black",
-        variant === 'destructive' && "bg-destructive text-destructive-foreground",
-      )}
+      className={cn("font-semibold", className)}
     >
       {level}
     </Badge>
@@ -77,10 +85,10 @@ export default function DashboardPage() {
   if (loading || !user) {
     return (
       <div className="container mx-auto p-4 md:p-8">
-        <Card className="rounded-none border-primary/20 bg-background/50 backdrop-blur-sm">
+        <Card>
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-primary">
-                  <ShieldCheck />
+                <CardTitle className="flex items-center gap-2">
+                  <ShieldCheck className="text-primary" />
                   <span>Session Logs</span>
                 </CardTitle>
             </CardHeader>
@@ -98,10 +106,10 @@ export default function DashboardPage() {
 
   return (
     <div className="container mx-auto p-4 md:p-8">
-      <Card className="rounded-none border-primary/20 bg-background/50 backdrop-blur-sm">
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-primary">
-            <ShieldCheck />
+          <CardTitle className="flex items-center gap-2">
+            <ShieldCheck className="text-primary" />
             <span>Session Logs</span>
           </CardTitle>
         </CardHeader>
@@ -113,18 +121,18 @@ export default function DashboardPage() {
               <Skeleton className="h-10 w-full" />
             </div>
           ) : history.length > 0 ? (
-            <div className="border border-primary/20">
+            <div className="overflow-hidden rounded-lg border">
             <Table>
-              <TableHeader className="bg-primary/10 hover:bg-primary/20">
-                <TableRow className="border-primary/20">
-                  <TableHead className="w-[200px] text-primary">Timestamp</TableHead>
-                  <TableHead className="text-primary">Strength</TableHead>
-                  <TableHead className="text-primary">Feedback</TableHead>
+              <TableHeader className="bg-slate-50">
+                <TableRow>
+                  <TableHead className="w-[200px]">Timestamp</TableHead>
+                  <TableHead>Strength</TableHead>
+                  <TableHead>Feedback</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {history.map((item) => (
-                  <TableRow key={item.id} className="border-primary/20 font-code">
+                  <TableRow key={item.id}>
                     <TableCell>{item.timestamp?.toDate().toLocaleString()}</TableCell>
                     <TableCell>
                       <StrengthBadge level={item.strengthLevel} />
@@ -142,13 +150,4 @@ export default function DashboardPage() {
       </Card>
     </div>
   );
-}
-
-// Add cn utility function if it's not globally available in your project context.
-// In this setup, it's assumed to be in `@/lib/utils`.
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
 }

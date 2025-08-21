@@ -7,7 +7,6 @@ import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { LogOut, User, KeySquare, ShieldCheck } from "lucide-react";
-import { TypingEffect } from "@/components/TypingEffect";
 
 export function Header() {
   const { user, loading } = useAuth();
@@ -19,39 +18,37 @@ export function Header() {
   };
 
   return (
-    <header className="border-b border-primary/20 bg-background/50 backdrop-blur-sm">
+    <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
-        <Link href="/" className="flex items-center gap-2 text-lg font-bold text-primary transition-shadow hover:shadow-glow">
+        <Link href="/" className="flex items-center gap-2 text-lg font-bold text-primary">
           <KeySquare className="h-6 w-6" />
-          <div className="hidden sm:block">
-            <TypingEffect text="PasswordAnalyzer" />
-          </div>
+          <span className="hidden sm:inline">PasswordAnalyzer</span>
         </Link>
         <nav className="flex items-center gap-2">
           {!loading && (
             <>
               {user ? (
                 <>
-                  <Button variant="ghost" className="rounded-none hover:bg-primary/10 hover:text-primary" asChild>
+                  <Button variant="ghost" asChild>
                     <Link href="/dashboard">
                       <ShieldCheck />
-                      <span className="ml-2 hidden sm:inline">Session Logs</span>
+                      <span className="ml-2 hidden sm:inline">Dashboard</span>
                     </Link>
                   </Button>
-                  <Button variant="ghost" onClick={handleSignOut} className="rounded-none hover:bg-accent/10 hover:text-accent">
+                  <Button variant="ghost" onClick={handleSignOut}>
                     <LogOut />
                     <span className="ml-2 hidden sm:inline">Logout</span>
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" className="rounded-none hover:bg-primary/10 hover:text-primary" asChild>
+                  <Button variant="ghost" asChild>
                     <Link href="/login">
                       <User />
                       <span className="ml-2">Login</span>
                     </Link>
                   </Button>
-                  <Button variant="outline" className="rounded-none border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:shadow-glow" asChild>
+                  <Button asChild>
                     <Link href="/signup">Sign Up</Link>
                   </Button>
                 </>
